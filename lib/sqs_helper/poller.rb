@@ -2,7 +2,7 @@ module SqsHelper
   class Poller
 
     attr_accessor :connector, :aws_poller, :end_polling_flag, :wait_time_seconds, :unparsed_messages,
-                  :logger, :queue_name, :visibility_timeout
+                  :logger, :queue_name, :visibility_timeout, :log_all_messages
 
     def initialize(connector, queue_name, args = {})
       self.connector = connector
@@ -12,6 +12,7 @@ module SqsHelper
       self.unparsed_messages = args[:unparsed_messages]
       self.queue_name = queue_name
       self.visibility_timeout = args[:visibility_timeout]
+      self.log_all_messages = args[:log_all_messages]
       initialize_logger(args[:logger])
       initialize_aws_poller
     end
@@ -40,6 +41,7 @@ module SqsHelper
       logger.info "Starting SQS polling for #{queue_name}" if logger
       aws_poller.poll(wait_time_seconds: wait_time_seconds, visibility_timeout: visibility_timeout) do |message, stats|
         payload = message.body
+        logger.info "Incoming message on queue #{queue_name}: #{payload}" if logger and log_all_messages
         begin
           payload = JSON.parse(payload) unless self.unparsed_messages
           action_callback.call(payload)
