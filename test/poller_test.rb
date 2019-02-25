@@ -13,26 +13,25 @@ class PollerTest < Minitest::Test
   end
 
   def test_create_and_use_poller
-    poller = @connector.create_aws_poller(@queue)
-    @end_polling = false
-    poller.before_request do
-      throw :stop_polling if @end_polling
-    end
+    my_poller = SqsHelper::Poller.new(@connector, @queue, wait_time_seconds: 0.1)
+    poller = my_poller.aws_poller
     messages = (1..10).collect do
       "x" * (rand(100) + 1)
     end
     @message_lengths = Array.new
     messages.each {|message| @connector.send_message(@queue, message)}
-    p = Proc.new {|message| @message_lengths << message.body.length}
+    p = Proc.new {|message| @message_lengths << message.length}
     t = Thread.new do
-      poller.poll(wait_time_seconds: 0.1) do |message, stats|
-        p.call(message)
-        #@message_lengths << message.body.length
-      end
+      my_poller.start_polling(p)
+      # poller.poll(wait_time_seconds: 0.1) do |message, stats|
+      #   p.call(message)
+      #   #@message_lengths << message.body.length
+      #end
     end
+
     sleep 1
     assert_equal messages.collect {|message| message.length}, @message_lengths
-    @end_polling = true
+    my_poller.stop_polling
     t.join
   end
 
