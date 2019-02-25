@@ -1,7 +1,21 @@
 ---
-sudo: false
+sudo: required
+
 language: ruby
 cache: bundler
+
 rvm:
   - 2.6.0
-before_install: gem install bundler -v 2.0.1
+  - jruby
+
+services:
+  - docker
+
+before_install:
+  - sudo apt-get update
+  - docker pull softwaremill/elasticmq:latest
+  - docker run -d -p 9324:9324 --name sqs-server softwaremill/elasticmq:latest
+  - gem install bundler -v 2.0.1
+
+script:
+  - bundle exec rake test
