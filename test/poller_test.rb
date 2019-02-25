@@ -23,9 +23,11 @@ class PollerTest < Minitest::Test
     end
     @message_lengths = Array.new
     messages.each {|message| @connector.send_message(@queue, message)}
+    p = Proc.new {|message| @message_lengths << message.body.length}
     t = Thread.new do
       poller.poll(wait_time_seconds: 0.1) do |message, stats|
-        @message_lengths << message.body.length
+        p.call(message)
+        #@message_lengths << message.body.length
       end
     end
     sleep 1
