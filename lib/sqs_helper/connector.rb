@@ -81,6 +81,12 @@ module SqsHelper
       client.create_queue(queue_name: queue_name).queue_url
     end
 
+    def create_aws_poller(queue_name)
+      with_queue(queue_name) do |queue_url|
+        Aws::SQS::QueuePoller.new(queue_url, client: client)
+      end
+    end
+
   end
 
 end
