@@ -28,7 +28,7 @@ class PollerTest < Minitest::Test
         @message_lengths << message.body.length
       end
     end
-    sleep 0.2
+    sleep 1
     assert_equal messages.collect {|message| message.length}, @message_lengths
     @end_polling = true
     t.join
