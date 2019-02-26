@@ -46,6 +46,7 @@ module SqsHelper
 
     def start_polling(action_callback, args = {})
       logger.info "Starting SQS polling for #{queue_name}" if logger
+      self.end_polling_flag = false
       aws_poller.poll(wait_time_seconds: wait_time_seconds, visibility_timeout: visibility_timeout) do |message, stats|
         payload = message.body
         logger.info "Incoming message on queue #{queue_name}: #{payload}" if logger and log_all_messages
