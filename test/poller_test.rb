@@ -36,9 +36,8 @@ class PollerTest < Minitest::Test
     message = {key: 'value', other_key: 'other_value'}
     @connector.send_message(@queue, message)
     @received_message = nil
-    p = Proc.new {|message| @received_message = message}
     t = Thread.new do
-      my_poller.start_polling(p)
+      my_poller.start_polling(->(message) {@received_message = message})
     end
     sleep 0.4
     assert_equal 'value', @received_message['key']

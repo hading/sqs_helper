@@ -1,4 +1,4 @@
-require "sqs_helper/version"
+require_relative "sqs_helper/version"
 
 module SqsHelper
   autoload(:Connector, 'sqs_helper/connector')

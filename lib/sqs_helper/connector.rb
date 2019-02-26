@@ -48,9 +48,12 @@ module SqsHelper
       with_queue(queue_name) do |queue_url|
         messages = client.receive_message(queue_url: queue_url, max_number_of_messages: 1).messages
         message = messages[0]
-        yield nil unless message
-        client.delete_message(queue_url: queue_url, receipt_handle: message.receipt_handle)
-        yield message.body
+        if message
+          client.delete_message(queue_url: queue_url, receipt_handle: message.receipt_handle)
+          yield message.body
+        else
+          yield nil
+        end
       end
     end
 
