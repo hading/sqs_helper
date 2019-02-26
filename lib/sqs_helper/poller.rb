@@ -21,7 +21,10 @@ module SqsHelper
 
     def initialize_aws_poller
       aws_poller.before_request do |stats|
-        throw :stop_polling if self.end_polling_flag
+        if self.end_polling_flag
+          logger.info "Shutting down queue #{queue_name} poller normally" if logger
+          throw :stop_polling
+        end
         sleep self.additional_sleep_time if additional_sleep_time and stats.received_message_count and (stats.received_message_count == received_message_count)
         self.received_message_count = stats.received_message_count
       end
