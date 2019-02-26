@@ -1,25 +1,29 @@
 module SqsHelper
   class Poller
 
-    attr_accessor :connector, :aws_poller, :end_polling_flag, :wait_time_seconds, :unparsed_messages,
-                  :logger, :queue_name, :visibility_timeout, :log_all_messages
+    attr_accessor :connector, :aws_poller, :end_polling_flag, :wait_time_seconds, :additional_sleep_time, :unparsed_messages,
+                  :logger, :queue_name, :visibility_timeout, :log_all_messages, :received_message_count
 
     def initialize(connector, queue_name, args = {})
       self.connector = connector
       self.aws_poller = connector.create_aws_poller(queue_name)
       self.end_polling_flag = false
-      self.wait_time_seconds = args[:wait_time_seconds] || 60
+      self.wait_time_seconds = [args[:wait_time_seconds] || 20, 20].min
       self.unparsed_messages = args[:unparsed_messages]
       self.queue_name = queue_name
-      self.visibility_timeout = args[:visibility_timeout]
+      self.visibility_timeout = args[:visibility_timeout] || 60
       self.log_all_messages = args[:log_all_messages]
+      self.additional_sleep_time = args[:additional_sleep_time]
+      self.received_message_count = nil
       initialize_logger(args[:logger])
       initialize_aws_poller
     end
 
     def initialize_aws_poller
-      aws_poller.before_request do
+      aws_poller.before_request do |stats|
         throw :stop_polling if self.end_polling_flag
+        sleep self.additional_sleep_time if additional_sleep_time and stats.received_message_count and (stats.received_message_count == received_message_count)
+        self.received_message_count = stats.received_message_count
       end
     end
 
