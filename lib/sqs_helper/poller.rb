@@ -7,13 +7,13 @@ module SqsHelper
     def initialize(connector, queue_name, args = {})
       self.connector = connector
       self.aws_poller = connector.create_aws_poller(queue_name)
+      self.queue_name = queue_name
       self.end_polling_flag = false
       self.wait_time_seconds = [args[:wait_time_seconds] || 20, 20].min
+      self.additional_sleep_time = args[:additional_sleep_time]
       self.unparsed_messages = args[:unparsed_messages]
-      self.queue_name = queue_name
       self.visibility_timeout = args[:visibility_timeout] || 60
       self.log_all_messages = args[:log_all_messages]
-      self.additional_sleep_time = args[:additional_sleep_time]
       self.received_message_count = nil
       initialize_logger(args[:logger])
       initialize_aws_poller
