@@ -86,6 +86,11 @@ The main method to be used is ```start_polling(action_callback)```. ```action_ca
 that takes the message body (parsed from JSON or raw as specified) and does whatever to it. On calling this method
 the queue will start to be polled and the callback used. It is blocking, so you may want to put the call in a thread.
 
+For our current purposes, pulling a message at a time is probably fine. The AWS SDK provides a way to pull up to 
+10 messages at a time, so we might implement that at some point. 
+
+There is no reason that multiple pollers on a given queue can't be run if desired.
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/hading/sqs_helper.
