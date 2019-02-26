@@ -31,13 +31,13 @@ class ConnectorTest < Minitest::Test
 
   def test_get_message_from_empty_queue
     @connector.with_message(@queue) do |payload|
-      assert_equal nil, payload
+      assert_nil payload
     end
   end
 
   def test_get_json_message_from_empty_queue
     @connector.with_parsed_message(@queue) do |payload|
-      assert_equal nil, payload
+      assert_nil payload
     end
   end
 
