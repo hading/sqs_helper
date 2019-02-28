@@ -3,8 +3,9 @@ require_relative 'test_helper'
 class ConnectorTest < Minitest::Test
 
   def setup
-    @connector = SqsHelper::Connector.new( aws_key_id: 'key_id', aws_secret_key: 'secret_key',
-                                          endpoint: 'http://localhost:9324', region: 'us-east-2')
+    @connection_args = {aws_key_id: 'key_id', aws_secret_key: 'secret_key',
+                        endpoint: 'http://localhost:9324', region: 'us-east-2'}
+    @connector = SqsHelper::Connector.new(@connection_args)
     @queue = 'sqs_helper_test'
   end
 
@@ -39,6 +40,17 @@ class ConnectorTest < Minitest::Test
     @connector.with_parsed_message(@queue) do |payload|
       assert_nil payload
     end
+  end
+
+  def test_connector_set
+    connector_set = SqsHelper::ConnectorSet.new
+    connector_set.create_connector(:key, @connection_args)
+    assert_equal SqsHelper::Connector, connector_set.at(:key).class
+    assert_equal connector_set[:key], connector_set.at(:key)
+    connector_set.add_connector(:existing, @connector)
+    assert_equal @connector, connector_set.at(:existing)
+    connector_set.delete_connector(:key)
+    assert_equal nil, connector_set.at(:key)
   end
 
 end
