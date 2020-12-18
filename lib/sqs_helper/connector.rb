@@ -1,24 +1,21 @@
 require 'json'
 require 'aws-sdk-sqs'
 
-
 module SqsHelper
   class Connector < Object
-    attr_accessor :queue_urls, :endpoint, :region, :aws_secret_key, :aws_key_id, :client
+    attr_accessor :queue_urls, :endpoint, :region, :client
 
     def initialize(config)
       config_hash = config.to_h
       config_hash = config_hash.symbolize_keys if config_hash.respond_to?(:symbolize_keys)
       self.queue_urls = Hash.new
       self.endpoint = config_hash[:endpoint]
-      self.aws_key_id = config_hash[:aws_key_id]
-      self.aws_secret_key = config_hash[:aws_secret_key]
       self.region = config_hash[:region]
       initialize_client
     end
 
     def initialize_client
-      self.client = Aws::SQS::Client.new(endpoint: endpoint, region: region, access_key_id: aws_key_id, secret_access_key: aws_secret_key)
+      self.client = Aws::SQS::Client.new(endpoint: endpoint, region: region)
     end
 
     def clear_all_queues

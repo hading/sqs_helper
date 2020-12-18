@@ -3,8 +3,7 @@ require_relative 'test_helper'
 class ConnectorTest < Minitest::Test
 
   def setup
-    @connection_args = {aws_key_id: 'key_id', aws_secret_key: 'secret_key',
-                        endpoint: 'http://localhost:9324', region: 'us-east-2'}
+    @connection_args = {endpoint: 'http://localhost:9324', region: 'us-east-2'}
     @connector = SqsHelper::Connector.new(@connection_args)
     @queue = 'sqs_helper_test'
   end

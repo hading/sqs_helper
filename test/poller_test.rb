@@ -4,8 +4,7 @@ require 'logger'
 class PollerTest < Minitest::Test
 
   def setup
-    @connector = SqsHelper::Connector.new(aws_key_id: 'key_id', aws_secret_key: 'secret_key',
-                                          endpoint: 'http://localhost:9324', region: 'us-east-2')
+    @connector = SqsHelper::Connector.new(endpoint: 'http://localhost:9324', region: 'us-east-2')
     @logger = Logger.new(STDOUT)
     @queue = 'sqs_helper_polling_test'
   end

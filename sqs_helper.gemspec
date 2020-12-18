@@ -5,8 +5,8 @@ require "sqs_helper/version"
 Gem::Specification.new do |spec|
   spec.name          = "sqs_helper"
   spec.version       = SqsHelper::VERSION
-  spec.authors       = ["Howard Ding"]
-  spec.email         = ["hding2@illinois.edu"]
+  spec.authors       = ["Howard Ding", "Colleen Fallaw"]
+  spec.email         = ["repo-devs@librar.illinois.edu"]
 
   spec.summary       = %q{Simplify use of SQS}
   spec.description   = %q{Simplify use of SQS}
